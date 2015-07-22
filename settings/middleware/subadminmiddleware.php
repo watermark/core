@@ -56,7 +56,8 @@ class SubadminMiddleware extends Middleware {
 	 * @throws \Exception
 	 */
 	public function beforeController($controller, $methodName) {
-		if(!$this->reflector->hasAnnotation('NoSubadminRequired')) {
+		if(!$this->reflector->hasAnnotation('NoSubadminRequired') &&
+			!$this->reflector->hasAnnotation('PublicPage')) {
 			if(!$this->isSubAdmin) {
 				throw new \Exception('Logged in user must be a subadmin');
 			}

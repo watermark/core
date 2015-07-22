@@ -30,6 +30,7 @@ use OC\Files\View;
 use OC\Settings\Controller\AppSettingsController;
 use OC\Settings\Controller\CertificateController;
 use OC\Settings\Controller\CheckSetupController;
+use OC\Settings\Controller\ComplianceController;
 use OC\Settings\Controller\EncryptionController;
 use OC\Settings\Controller\GroupsController;
 use OC\Settings\Controller\LogSettingsController;
@@ -155,6 +156,12 @@ class Application extends App {
 				$c->query('ClientService'),
 				$c->query('URLGenerator'),
 				$c->query('Util')
+			);
+		});
+		$container->registerService('ComplianceController', function(IContainer $c) {
+			return new ComplianceController(
+				$c->query('AppName'),
+				$c->query('Request')
 			);
 		});
 

@@ -42,7 +42,8 @@
 		</div>
 		<footer role="contentinfo">
 			<p class="info">
-				<?php print_unescaped($theme->getLongFooter()); ?>
+				<?php print_unescaped($theme->getLongFooter()); ?> <br/>
+				<small><a href=""><?php p($l->t('Legal notes')) ?></a></small>
 			</p>
 		</footer>
 	</body>
