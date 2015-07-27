@@ -307,6 +307,16 @@ if (isset($_POST['action']) && isset($_POST['itemType']) && isset($_POST['itemSo
 					}
 				}
 
+				$config = \OC::$server->getConfig();
+				$allowUserEnumeration = $config->getAppValue('core', 'privacy.sharing-autocompletion', true);
+
+				if (!$allowUserEnumeration) {
+					$searchTerm = $_GET['search'];
+					$shareWith = array_filter($shareWith, function($user) use ($searchTerm) {
+						return $user['label'] === $searchTerm;
+					});
+				}
+
 				$sorter = new \OC\Share\SearchResultSorter($_GET['search'],
 														   'label',
 														   new \OC\Log());
