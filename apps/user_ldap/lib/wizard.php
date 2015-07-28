@@ -1029,13 +1029,6 @@ class Wizard extends LDAPUtility {
 		if(!$hostInfo) {
 			throw new \Exception($this->l->t('Invalid Host'));
 		}
-		if(isset($hostInfo['scheme'])) {
-			if(isset($hostInfo['port'])) {
-				//problem
-			} else {
-				$host .= ':' . $port;
-			}
-		}
 		\OCP\Util::writeLog('user_ldap', 'Wiz: Attempting to connect ', \OCP\Util::DEBUG);
 		$cr = $this->ldap->connect($host, $port);
 		if(!is_resource($cr)) {
@@ -1285,7 +1278,7 @@ class Wizard extends LDAPUtility {
 			return $this->cr;
 		}
 		$cr = $this->ldap->connect(
-			$this->configuration->ldapHost.':'.$this->configuration->ldapPort,
+			$this->configuration->ldapHost,
 			$this->configuration->ldapPort);
 
 		$this->ldap->setOption($cr, LDAP_OPT_PROTOCOL_VERSION, 3);

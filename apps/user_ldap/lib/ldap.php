@@ -48,6 +48,12 @@ class LDAP implements ILDAPWrapper {
 	 * @return mixed
 	 */
 	public function connect($host, $port) {
+		$protoIndicatorPos = strpos($host, '://') !== false;
+		if(    $protoIndicatorPos !== false
+			&& strpos($host, ':', $protoIndicatorPos + 1)) {
+			//ldap_connect ignores port parameter when URLs are passed
+			$host .= ':' . $port;
+		}
 		return $this->invokeLDAPMethod('connect', $host, $port);
 	}
 
