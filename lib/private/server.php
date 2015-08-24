@@ -54,6 +54,7 @@ use OC\Mail\Mailer;
 use OC\Security\CertificateManager;
 use OC\Security\Crypto;
 use OC\Security\Hasher;
+use OC\Security\CredentialsManager;
 use OC\Security\SecureRandom;
 use OC\Security\TrustedDomainHelper;
 use OC\Tagging\TagMapper;
@@ -290,6 +291,9 @@ class Server extends SimpleContainer implements IServerContainer {
 		});
 		$this->registerService('Hasher', function (Server $c) {
 			return new Hasher($c->getConfig());
+		});
+		$this->registerService('CredentialsManager', function (Server $c) {
+			return new CredentialsManager($c->getCrypto(), $c->getDatabaseConnection());
 		});
 		$this->registerService('DatabaseConnection', function (Server $c) {
 			$factory = new \OC\DB\ConnectionFactory();
@@ -765,6 +769,15 @@ class Server extends SimpleContainer implements IServerContainer {
 	 */
 	public function getHasher() {
 		return $this->query('Hasher');
+	}
+
+	/**
+	 * Returns a CredentialsManager instance
+	 *
+	 * @return \OCP\Security\ICredentialsManager
+	 */
+	public function getCredentialsManager() {
+		return $this->query('CredentialsManager');
 	}
 
 	/**
