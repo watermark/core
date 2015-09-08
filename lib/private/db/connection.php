@@ -301,4 +301,13 @@ class Connection extends \Doctrine\DBAL\Connection implements IDBConnection {
 	public function inTransaction() {
 		return $this->getTransactionNestingLevel() > 0;
 	}
+
+	public function commit() {
+		try {
+			parent::commit();
+		} catch (\Exception $e) {
+			$this->rollBack();
+			throw $e;
+		}
+	}
 }
