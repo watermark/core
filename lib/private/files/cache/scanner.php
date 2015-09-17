@@ -32,8 +32,12 @@
 namespace OC\Files\Cache;
 
 use OC\Files\Filesystem;
+use OC\ForbiddenException;
 use OC\Hooks\BasicEmitter;
 use OCP\Config;
+use OCP\Files\NotFoundException;
+use OCP\Files\StorageInvalidException;
+use OCP\Files\StorageNotAvailableException;
 use OCP\Lock\ILockingProvider;
 
 /**
@@ -138,7 +142,17 @@ class Scanner extends BasicEmitter {
 			}
 			$this->emit('\OC\Files\Cache\Scanner', 'scanFile', array($file, $this->storageId));
 			\OC_Hook::emit('\OC\Files\Cache\Scanner', 'scan_file', array('path' => $file, 'storage' => $this->storageId));
-			$data = $this->getData($file);
+			try {
+				$data = $this->getData($file);
+			} catch (StorageNotAvailableException $e ) {
+				return null;
+			} catch (StorageInvalidException $e) {
+				return null;
+			} catch (NotFoundException $e) {
+				return null;
+			} catch (ForbiddenException $e) {
+				return null;
+			}
 			if ($data) {
 				$parent = dirname($file);
 				if ($parent === '.' or $parent === '/') {
