@@ -1204,8 +1204,10 @@ class Share extends Constants {
 					->from('share')
 					->where($qb->expr()->eq('parent', $qb->createParameter('parent')))
 					->andWhere($qb->expr()->eq('share_type', $qb->createParameter('share_type')))
+					->andWhere($qb->expr()->neq('permissions', $qb->createParameter('shareDeleted')))
 					->setParameter(':parent', (int)$rootItem['id'])
-					->setParameter(':share_type', 2);
+					->setParameter(':share_type', 2)
+					->setParameter(':shareDeleted', 0);
 				$result = $qb->execute();
 
 				$ids = [];
