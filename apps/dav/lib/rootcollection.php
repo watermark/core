@@ -22,10 +22,13 @@ class RootCollection extends SimpleCollection {
 		$principalCollection->disableListing = $disableListing;
 		$filesCollection = new Files\RootCollection($principalBackend);
 		$filesCollection->disableListing = $disableListing;
+		$uploadCollection = new Upload\RootCollection($principalBackend);
+		$uploadCollection->disableListing = $disableListing;
 
 		$children = [
 			$principalCollection,
 			$filesCollection,
+			$uploadCollection,
 		];
 
 		parent::__construct('root', $children);
