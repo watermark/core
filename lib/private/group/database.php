@@ -53,6 +53,16 @@ class OC_Group_Database extends OC_Group_Backend {
 	/** @var string[] */
 	private $groupCache = [];
 
+	/** @var \OCP\IDBConnection */
+	private $dbConn;
+
+	/**
+	 * @param \OCP\IDBConnection $dbConn
+	 */
+	public function __construct(\OCP\IDBConnection $dbConn) {
+		$this->dbConn = $dbConn;
+	}
+
 	/**
 	 * Try to create a new group
 	 * @param string $gid The name of the group to create
