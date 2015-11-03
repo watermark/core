@@ -51,6 +51,10 @@ use OC\Files\Node\HookConnector;
 use OC\Files\Node\Root;
 use OC\Files\View;
 use OC\Http\Client\ClientService;
+use OC\IntegrityCheck\Checker;
+use OC\IntegrityCheck\Helpers\AppLocator;
+use OC\IntegrityCheck\Helpers\EnvironmentHelper;
+use OC\IntegrityCheck\Helpers\FileAccessHelper;
 use OC\Lock\DBLockingProvider;
 use OC\Lock\MemcacheLockingProvider;
 use OC\Lock\NoopLockingProvider;
@@ -401,6 +405,13 @@ class Server extends SimpleContainer implements IServerContainer {
 		});
 		$this->registerService('TrustedDomainHelper', function ($c) {
 			return new TrustedDomainHelper($this->getConfig());
+		});
+		$this->registerService('IntegrityCodeChecker', function (Server $c) {
+			return new Checker(
+					new EnvironmentHelper(),
+					new FileAccessHelper(),
+					new AppLocator()
+			);
 		});
 		$this->registerService('Request', function ($c) {
 			if (isset($this['urlParams'])) {
@@ -1061,6 +1072,13 @@ class Server extends SimpleContainer implements IServerContainer {
 	 */
 	public function getNotificationManager() {
 		return $this->query('NotificationManager');
+	}
+
+	/**
+	 * @return \OC\IntegrityCheck\Checker
+	 */
+	public function getIntegrityCodeChecker() {
+		return $this->query('IntegrityCodeChecker');
 	}
 
 	/**

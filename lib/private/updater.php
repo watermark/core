@@ -34,6 +34,7 @@
 namespace OC;
 
 use OC\Hooks\BasicEmitter;
+use OC\IntegrityCheck\Checker;
 use OC_App;
 use OC_Installer;
 use OC_Util;
@@ -61,6 +62,9 @@ class Updater extends BasicEmitter {
 	/** @var IConfig */
 	private $config;
 
+	/** @var Checker */
+	private $checker;
+
 	/** @var bool */
 	private $simulateStepEnabled;
 
@@ -81,14 +85,17 @@ class Updater extends BasicEmitter {
 	/**
 	 * @param HTTPHelper $httpHelper
 	 * @param IConfig $config
+	 * @param Checker $checker
 	 * @param ILogger $log
 	 */
 	public function __construct(HTTPHelper $httpHelper,
 								IConfig $config,
+								Checker $checker,
 								ILogger $log = null) {
 		$this->httpHelper = $httpHelper;
 		$this->log = $log;
 		$this->config = $config;
+		$this->checker = $checker;
 		$this->simulateStepEnabled = true;
 		$this->updateStepEnabled = true;
 	}
@@ -335,10 +342,88 @@ class Updater extends BasicEmitter {
 			//Invalidate update feed
 			$this->config->setAppValue('core', 'lastupdatedat', 0);
 
+			// Check for code integrity on the stable channel
+			if(\OC_Util::getChannel() === 'stable') {
+				$this->checkCoreCodeSignatures();
+				$this->checkAppCodeSignatures();
+			}
+
 			// only set the final version if everything went well
 			$this->config->setSystemValue('version', implode('.', \OC_Util::getVersion()));
 		}
 	}
+
+	/**
+	 * @param string $scope
+	 */
+	protected function checkCodeSignature($scope) {
+		$this->emit('\OC\Updater', 'startCheckCodeIntegrity', [$scope]);
+		try {
+			if($scope === 'core') {
+				$results = $this->checker->verifyCoreSignature();
+			} else {
+				$results = $this->checker->verifyAppSignature($scope);
+			}
+		} catch (\Exception $e) {
+			$this->emit(
+					'\OC\Updater',
+					'noticeCheckCodeIntegrity',
+					[
+							'Failed to verify "'.$scope.'": <br/>'.get_class($e) . ': ' . $e->getMessage(),
+					]
+			);
+			return;
+		}
+		if(!empty($results)) {
+			$this->emit(
+					'\OC\Updater',
+					'noticeCheckCodeIntegrity',
+					[
+							(string)('Invalid signature. This indicates a faulty update.'),
+					]
+			);
+
+			$categories = [
+					'FILE_TOO_MUCH' => 'Unrequired files:',
+					'FILE_MISSING' => 'Missing files:',
+					'INVALID_HASH' => 'Files with invalid hash:',
+			];
+
+			$resultsString = '';
+			foreach($categories as $categoryKey => $categoryString) {
+				foreach($results[$categoryKey] as $fileName => $result) {
+					$resultsString .= '<li>'.$fileName .'</li>';
+				}
+
+				$this->emit('\OC\Updater', 'noticeCheckCodeIntegrity', ['<h1>'.$categoryString.'</h1><br/><ul>'.$resultsString.'</ul>']);
+			}
+		}
+
+		$this->emit('\OC\Updater', 'finishedCheckCodeIntegrity', [$scope]);
+	}
+
+	protected function checkCoreCodeSignatures() {
+		$this->checkCodeSignature('core');
+	}
+
+	protected function checkAppCodeSignatures() {
+		$appIds = \OC_App::getAllApps();
+		foreach($appIds as $appId) {
+			// If an application is shipped a valid signature is required
+			$isShipped = \OC::$server->getAppManager()->isShipped($appId);
+			$appNeedsToBeChecked = false;
+			if ($isShipped) {
+				$appNeedsToBeChecked = true;
+			} elseif (file_exists(\OC_App::getAppPath($appId)) . '/appinfo/signature.json') {
+				$appNeedsToBeChecked = true;
+			}
+
+			if($appNeedsToBeChecked) {
+				$this->checkCodeSignature($appId);
+			}
+		}
+	}
+
 
 	protected function checkCoreUpgrade() {
 		$this->emit('\OC\Updater', 'dbSimulateUpgradeBefore');
