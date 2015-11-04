@@ -42,12 +42,14 @@ class SecurityMiddlewareTest extends \Test\TestCase {
 	private $logger;
 	private $navigationManager;
 	private $urlGenerator;
+	private $appManager;
+	private $appConfig;
 
 	protected function setUp() {
 		parent::setUp();
 
 		$this->controller = $this->getMockBuilder('OCP\AppFramework\Controller')
-			->disableOriginalConstructor()
+				->disableOriginalConstructor()
 				->getMock();
 		$this->reader = new ControllerMethodReflector();
 		$this->logger = $this->getMockBuilder(
@@ -66,6 +68,15 @@ class SecurityMiddlewareTest extends \Test\TestCase {
 				'OCP\IRequest')
 				->disableOriginalConstructor()
 				->getMock();
+		$this->appManager = $this->getMockBuilder(
+				'OCP\App\IAppManager')
+				->disableOriginalConstructor()
+				->getMock();
+		$this->appManager->method('isEnabledForUser')->willReturn(true);
+		$this->appConfig = $this->getMockBuilder(
+				'OCP\IAppConfig')
+				->disableOriginalConstructor()
+				->getMock();
 		$this->middleware = $this->getMiddleware(true, true);
 		$this->secException = new SecurityException('hey', false);
 		$this->secAjaxException = new SecurityException('hey', true);
@@ -79,6 +90,8 @@ class SecurityMiddlewareTest extends \Test\TestCase {
 			$this->navigationManager,
 			$this->urlGenerator,
 			$this->logger,
+			$this->appManager,
+			$this->appConfig,
 			'files',
 			$isLoggedIn,
 			$isAdminUser
