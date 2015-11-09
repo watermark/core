@@ -212,7 +212,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 		$this->userExists($user);
 		PHPUnit_Framework_Assert::assertEquals(200, $this->response->getStatusCode());
-
 	}
 
 	public function userExists($user){
@@ -778,4 +777,5 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$this->deleteGroup($group);
 		}
 	}
+
 }
