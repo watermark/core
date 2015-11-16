@@ -89,8 +89,6 @@ interface ISystemTagManager {
 	 * @param bool $userVisible whether the tag is visible by users
 	 * @param bool $userAssignable whether the tag is assignable by users
 	 *
-	 * @return \OCP\SystemTag\ISystemTag updated tag
-	 *
 	 * @throws \OCP\SystemTag\TagNotFoundException if tag with the given id does not exist
 	 * @throws \OCP\SystemTag\TagAlreadyExistsException if there is already another tag
 	 * with the same attributes

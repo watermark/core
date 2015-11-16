@@ -138,6 +138,12 @@ class Server extends SimpleContainer implements IServerContainer {
 			$tagMapper = $c->query('TagMapper');
 			return new TagManager($tagMapper, $c->getUserSession());
 		});
+		$this->registerService('SystemTagManager', function (Server $c) {
+			return new SystemTagManager($c->getDatabaseConnection());
+		});
+		$this->registerService('SystemTagObjectMapper', function (Server $c) {
+			return new SystemTagObjectMapper($c->getDatabaseConnection(), $c->query('SystemTagManager'));
+		});
 		$this->registerService('RootFolder', function (Server $c) {
 			// TODO: get user and user manager from container as well
 			$user = \OC_User::getUser();
@@ -580,6 +586,25 @@ class Server extends SimpleContainer implements IServerContainer {
 	public function getTagManager() {
 		return $this->query('TagManager');
 	}
+
+	/**
+	 * Returns the system-tag manager
+	 *
+	 * @return \OCP\SystemTag\ISystemTagManager
+	 */
+	public function getSystemTagManager() {
+		return $this->query('SystemTagManager');
+	}
+
+	/**
+	 * Returns the system-tag object mapper
+	 *
+	 * @return \OCP\SystemTag\ISystemTagObjectMapper
+	 */
+	public function getSystemTagObjectMapper() {
+		return $this->query('SystemTagObjectMapper');
+	}
+
 
 	/**
 	 * Returns the avatar manager, used for avatar functionality
