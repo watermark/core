@@ -112,7 +112,7 @@ interface IComment {
 	/**
 	 * returns the unix timestamp of the comment
 	 *
-	 * @return int
+	 * @return \DateTime
 	 * @since 9.0.0
 	 */
 	public function getTimestamp();
@@ -120,7 +120,7 @@ interface IComment {
 	/**
 	 * sets the timestamp of the comment and returns itself
 	 *
-	 * @param int $timestamp
+	 * @param \DateTime $timestamp
 	 * @return IComment
 	 * @since 9.0.0
 	 */
