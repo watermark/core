@@ -85,7 +85,9 @@ interface ICommentsManager {
 	public function getNumberOfCommentsForObject($objectType, $objectId);
 
 	/**
-	 * creates a new comment
+	 * creates a new comment and returns it. At this point of time, it is not
+	 * saved in the used data storage. Use save() after setting other fields
+	 * of the comment (e.g. message or verb).
 	 *
 	 * @param string $actorType the actor type (e.g. 'user')
 	 * @param string $actorId a user id
@@ -95,6 +97,36 @@ interface ICommentsManager {
 	 * @since 9.0.0
 	 */
 	public function create($actorType, $actorId, $objectType, $objectId);
+
+	/**
+	 * permanently deletes the comment specified by the ID
+	 *
+	 * When the comment has child comments, their parent ID will be changed to
+	 * the parent ID of the item that is to be deleted.
+	 *
+	 * @param string $id
+	 * @return bool
+	 * @since 9.0.0
+	 */
+	public function delete($id);
+
+	/**
+	 * saves the comment permanently and returns it
+	 *
+	 * if the supplied comment has an empty ID, a new entry comment will be
+	 * saved and the instance updated with the new ID.
+	 *
+	 * Otherwise, an existing comment will be updated.
+	 *
+	 * Throws NotFoundException when a comment that is to be updated does not
+	 * exist anymore at this point of time.
+	 *
+	 * @param IComment
+	 * @return bool
+	 * @throws NotFoundException
+	 * @since 9.0.0
+	 */
+	public function save(&$comment);
 
 	/**
 	 * removes references to specific actor (e.g. on user delete) of a comment.

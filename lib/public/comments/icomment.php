@@ -25,6 +25,21 @@ interface IComment {
 	public function getId();
 
 	/**
+	 * sets the ID of the comment and returns itself
+	 *
+	 * It is only allowed to set the ID only, if the current id is an empty
+	 * string (which means it is not stored in a database, storage or whatever
+	 * the concrete implementation does), or vice versa. Changing a given ID is
+	 * not permitted and must result in an IllegalIDChangeException.
+	 *
+	 * @param string $id
+	 * @return IComment
+	 * @throws IllegalIDChangeException
+	 * @since 9.0.0
+	 */
+	public function setId($id);
+
+	/**
 	 * returns the parent ID of the comment
 	 *
 	 * @return string
@@ -110,7 +125,9 @@ interface IComment {
 	public function setActor($actorType, $actorId);
 
 	/**
-	 * returns the unix timestamp of the comment
+	 * returns the unix timestamp of the comment.
+	 *
+	 * If not explicitely set, it shall default to the time of initialization.
 	 *
 	 * @return \DateTime
 	 * @since 9.0.0
@@ -159,30 +176,6 @@ interface IComment {
 	 * @since 9.0.0
 	 */
 	public function setObject($objectType, $objectId);
-
-	/**
-	 * saves the comment permanently and returns itself
-	 *
-	 * @return IComment
-	 * @since 9.0.0
-	 */
-	public function save();
-
-	/**
-	 * permanently deletes the comment and returns itself
-	 *
-	 * @return IComment
-	 * @since 9.0.0
-	 */
-	public function delete();
-
-	/**
-	 * loads its data from its storage and returns itself
-	 *
-	 * @return IComment
-	 * @since 9.0.0
-	 */
-	public function load();
 
 }
 
