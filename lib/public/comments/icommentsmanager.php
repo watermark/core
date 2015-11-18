@@ -61,7 +61,7 @@ interface ICommentsManager {
 	/**
 	 * returns comments for a specific object (e.g. a file).
 	 *
-	 * The sort order is always oldest to newest.
+	 * The sort order is always newest to oldest.
 	 *
 	 * @param string $objectType the object type, e.g. 'files'
 	 * @param string $objectId the id of the object
@@ -108,10 +108,10 @@ interface ICommentsManager {
 	public function deleteReferencesOfActor($actorType, $actorId);
 
 	/**
-	 * deletes all comments made by a specific actor (e.g. on user delete)
+	 * deletes all comments made of a specific object (e.g. on file delete)
 	 *
-	 * @param string $objectType the actor type (e.g. 'user')
-	 * @param string $objectId a user id
+	 * @param string $objectType the object type (e.g. 'file')
+	 * @param string $objectId e.g. the file id
 	 * @return boolean
 	 * @since 9.0.0
 	 */

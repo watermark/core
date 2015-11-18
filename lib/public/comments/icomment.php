@@ -60,7 +60,7 @@ interface IComment {
 	/**
 	 * sets the message of the comment and returns itself
 	 *
-	 * @param $message
+	 * @param string $message
 	 * @return IComment
 	 * @since 9.0.0
 	 */
@@ -77,7 +77,7 @@ interface IComment {
 	/**
 	 * sets the verb of the comment, e.g. 'comment' or 'like'
 	 *
-	 * @param $verb
+	 * @param string $verb
 	 * @return IComment
 	 * @since 9.0.0
 	 */
