@@ -141,7 +141,7 @@ interface IComment {
 	 * @return IComment
 	 * @since 9.0.0
 	 */
-	public function setTimestamp($timestamp);
+	public function setTimestamp(\DateTime $timestamp);
 
 	/**
 	 * returns the timestamp of the most recent child
