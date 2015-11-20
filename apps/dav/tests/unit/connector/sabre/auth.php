@@ -249,9 +249,12 @@ class Auth extends TestCase {
 	}
 
 	public function testAuthenticateAlreadyLoggedIn() {
-		$server = $this->getMockBuilder('\Sabre\DAV\Server')
-			->disableOriginalConstructor()
-			->getMock();
+		$request = $this->getMockBuilder('Sabre\HTTP\RequestInterface')
+				->disableOriginalConstructor()
+				->getMock();
+		$response = $this->getMockBuilder('Sabre\HTTP\ResponseInterface')
+				->disableOriginalConstructor()
+				->getMock();
 		$this->userSession
 			->expects($this->once())
 			->method('isLoggedIn')
@@ -275,13 +278,10 @@ class Auth extends TestCase {
 			->expects($this->once())
 			->method('close');
 
-		$this->assertTrue($this->auth->authenticate($server, 'TestRealm'));
+		$response = $this->auth->check($request, $response);
+		$this->assertEquals([true, 'principals/MyWrongDavUser'], $response);
 	}
 
-	/**
-	 * @expectedException \Sabre\DAV\Exception\NotAuthenticated
-	 * @expectedExceptionMessage No basic authentication headers were found
-	 */
 	public function testAuthenticateNoBasicAuthenticateHeadersProvided() {
 		$server = $this->getMockBuilder('\Sabre\DAV\Server')
 			->disableOriginalConstructor()
@@ -292,7 +292,8 @@ class Auth extends TestCase {
 		$server->httpResponse = $this->getMockBuilder('\Sabre\HTTP\ResponseInterface')
 			->disableOriginalConstructor()
 			->getMock();
-		$this->auth->authenticate($server, 'TestRealm');
+		$response = $this->auth->check($server->httpRequest, $server->httpResponse);
+		$this->assertEquals([false, 'No \'Authorization: Basic\' header found. Either the client didn\'t send one, or the server is mis-configured'], $response);
 	}
 
 	public function testAuthenticateValidCredentials() {
@@ -325,13 +326,10 @@ class Auth extends TestCase {
 			->expects($this->exactly(2))
 			->method('getUser')
 			->will($this->returnValue($user));
-		$this->assertTrue($this->auth->authenticate($server, 'TestRealm'));
+		$response = $this->auth->check($server->httpRequest, $server->httpResponse);
+		$this->assertEquals([true, 'principals/username'], $response);
 	}
 
-	/**
-	 * @expectedException \Sabre\DAV\Exception\NotAuthenticated
-	 * @expectedExceptionMessage Username or password does not match
-	 */
 	public function testAuthenticateInvalidCredentials() {
 		$server = $this->getMockBuilder('\Sabre\DAV\Server')
 			->disableOriginalConstructor()
@@ -352,6 +350,7 @@ class Auth extends TestCase {
 			->method('login')
 			->with('username', 'password')
 			->will($this->returnValue(false));
-		$this->auth->authenticate($server, 'TestRealm');
+		$response = $this->auth->check($server->httpRequest, $server->httpResponse);
+		$this->assertEquals([false, 'Username or password was incorrect'], $response);
 	}
 }

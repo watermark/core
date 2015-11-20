@@ -137,7 +137,7 @@ class DAV extends Common {
 		$this->client->setThrowExceptions(true);
 
 		if ($this->secure === true && $this->certPath) {
-			$this->client->addTrustedCertificates($this->certPath);
+			$this->client->addCurlSetting(CURLOPT_CAINFO, $this->certPath);
 		}
 	}
 
