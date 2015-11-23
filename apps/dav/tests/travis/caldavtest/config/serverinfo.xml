@@ -21,7 +21,7 @@
 
 <serverinfo>
 	<host>localhost</host>
-	<nonsslport>8080</nonsslport>
+	<nonsslport>8888</nonsslport>
 	<authtype>basic</authtype>
 	<!-- <unix>/tmp/caldavd_requests/unsecured.sock</unix> -->
 
