@@ -29,3 +29,4 @@ PYTHONPATH="$SCRIPTPATH/pycalendar/src" python testcaldav.py --print-details-onf
 	"$SCRIPTPATH/caldavtest/tests/CardDAV/current-user-principal.xml" \
 	"$SCRIPTPATH/caldavtest/tests/CardDAV/sync-report.xml"
 
+tail "$SCRIPTPATH/../../../../data-autotest/owncloud.log"
