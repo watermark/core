@@ -21,7 +21,7 @@
 
 <serverinfo>
 	<host>localhost</host>
-	<nonsslport>8888</nonsslport>
+	<nonsslport>8080</nonsslport>
 	<authtype>basic</authtype>
 	<!-- <unix>/tmp/caldavd_requests/unsecured.sock</unix> -->
 
@@ -569,7 +569,7 @@
 			<!-- relative path to user addressbook home-->
 			<substitution>
 				<key>$addressbookhome%d:</key>
-				<value>$addressbooks_uids:$userguid%d:</value>
+				<value>$addressbooks:$userid%d:</value>
 			</substitution>
 			<!-- relative path to user addressbook-->
 			<substitution>
