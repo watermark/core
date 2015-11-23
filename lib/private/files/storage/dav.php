@@ -47,6 +47,7 @@ use OCP\Files\StorageNotAvailableException;
 use OCP\Util;
 use Sabre\DAV\Client;
 use Sabre\DAV\Exception\NotFound;
+use Sabre\DAV\Xml\Property\ResourceType;
 use Sabre\HTTP\ClientException;
 use Sabre\HTTP\ClientHttpException;
 
@@ -280,7 +281,8 @@ class DAV extends Common {
 			$response = $this->propfind($path);
 			$responseType = array();
 			if (isset($response["{DAV:}resourcetype"])) {
-				$responseType = $response["{DAV:}resourcetype"]->resourceType;
+				/** @var ResourceType[] $response */
+				$responseType = $response["{DAV:}resourcetype"]->getValue();
 			}
 			return (count($responseType) > 0 and $responseType[0] == "{DAV:}collection") ? 'dir' : 'file';
 		} catch (ClientHttpException $e) {
@@ -554,7 +556,8 @@ class DAV extends Common {
 			$response = $this->propfind($path);
 			$responseType = array();
 			if (isset($response["{DAV:}resourcetype"])) {
-				$responseType = $response["{DAV:}resourcetype"]->resourceType;
+				/** @var ResourceType[] $response */
+				$responseType = $response["{DAV:}resourcetype"]->getValue();
 			}
 			$type = (count($responseType) > 0 and $responseType[0] == "{DAV:}collection") ? 'dir' : 'file';
 			if ($type == 'dir') {
